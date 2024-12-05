@@ -3,6 +3,9 @@ package flows
 import (
 	"errors"
 	"log"
+	"os"
+	"path"
+	"strings"
 
 	"github.com/zsmatrix62/garmin-cli/garmin/actions"
 	"github.com/zsmatrix62/garmin-cli/garmin/client"
@@ -11,13 +14,7 @@ import (
 )
 
 func FlowUploadActivity(opt *BasicOption, filePath string) (gres *types.FlowGenericResp[string]) {
-	garminHost := opt.GarminHost
-	username := opt.Username
-	password := opt.Password
-	state_file_dir := opt.StateFileDir
-
 	var err error
-
 	gres = new(types.FlowGenericResp[string])
 	defer func() {
 		if err != nil {
@@ -25,6 +22,19 @@ func FlowUploadActivity(opt *BasicOption, filePath string) (gres *types.FlowGene
 		}
 	}()
 
+	if !strings.EqualFold(path.Ext(filePath), ".fit") {
+		err = errors.New("File must be a .fit file")
+		return
+	}
+	if _, fErr := os.Stat(filePath); os.IsNotExist(fErr) {
+		err = errors.New("File does not exist")
+		return
+	}
+
+	garminHost := opt.GarminHost
+	username := opt.Username
+	password := opt.Password
+	state_file_dir := opt.StateFileDir
 	gClient, stateLoaded := client.NewGarminClient(
 		garminHost,
 		username,

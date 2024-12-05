@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"os"
-	"path"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -41,14 +40,14 @@ func main() {
 
 			switch flow {
 			case "upload-fit":
-				if len(args) != 1 || !strings.EqualFold(path.Ext(args[0]), ".fit") {
-					log.Fatalf("Error: upload-fit requires a single argument of fit file")
+				if len(args) != 1 {
+					log.Fatalf("Error: upload-fit requires a single argument")
 				}
-				fitRes := flows.FlowUploadActivity(opts, args[0])
-				if fitRes.Err != nil {
-					log.Fatalf("Error: %v", fitRes.Err)
+				gres := flows.FlowUploadActivity(opts, args[0])
+				if gres.Err != nil {
+					log.Fatalf("Error: %v", gres.Err)
 				} else {
-					log.Printf("Success: %v", fitRes.Ok)
+					log.Printf("Success: %v", gres.Ok)
 				}
 			default:
 				log.Fatalf("Error: unknown flow %s", flow)
