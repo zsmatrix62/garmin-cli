@@ -15,7 +15,6 @@ import (
 	"time"
 
 	"github.com/antchfx/htmlquery"
-	"github.com/k0kubun/pp/v3"
 )
 
 type SessionClient struct {
@@ -218,7 +217,6 @@ func (sc *SessionClient) MarshallBodyToStruct(body io.ReadCloser, v interface{})
 		return err
 	}
 	body.Close()
-	pp.Printf("buf: %s\n", buf.String())
 	return json.Unmarshal(buf.Bytes(), v)
 }
 
