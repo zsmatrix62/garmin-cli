@@ -13,6 +13,7 @@ garmin-cli \
     -u <username> \
     -p <password> \
     -w <flow> \
+    -r [cn, cn|global] \
     --persist_state=[true, true|false] \
     --save_state="./garmin-cli-states" \
     [flow args]
