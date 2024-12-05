@@ -4,9 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### 🐛 Bug Fixes
+
+- Handle state persistence in FlowUploadActivity
+
 ### ⚙️ Miscellaneous Tasks
 
 - Bump version to 1.1.1
+- Update changelog
 
 ## [1.1.1] - 2024-12-05
 
