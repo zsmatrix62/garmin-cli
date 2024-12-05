@@ -62,9 +62,16 @@ func FlowUploadActivity(opt *BasicOption, filePath string) (gres *types.FlowGene
 			return
 		} else {
 			s.SetToken(token)
-			// Step 5: save sate
-			if err = state.SaveState(gClient, state_file_dir, username, ticket, token); err != nil {
-				return
+
+			if ticket != nil && opt.PersistState {
+				// Step 5: save sate
+				if err = state.SaveState(gClient, state_file_dir, username, ticket, token); err != nil {
+					return
+				}
+			} else {
+				if err = state.DeleteStateFile(state_file_dir, username); err != nil {
+					return
+				}
 			}
 		}
 	}
