@@ -4,9 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### 🚀 Features
+
+- Validate .fit file in FlowUploadActivity
+
+### 📚 Documentation
+
+- Update readme;
+- Update readme;
+
 ### ⚙️ Miscellaneous Tasks
 
 - Bump version to 1.1.0
+- Update changelog
 
 ## [1.1.0] - 2024-12-05
 
