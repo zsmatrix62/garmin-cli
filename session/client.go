@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/antchfx/htmlquery"
+	"github.com/k0kubun/pp/v3"
 )
 
 type SessionClient struct {
@@ -68,12 +69,16 @@ func (sc *SessionClient) applyHeaders(req *http.Request) {
 }
 
 // Get 发送 GET 请求
-func (sc *SessionClient) Get(url string) (*http.Response, error) {
+func (sc *SessionClient) Get(
+	url string,
+	implicitHeaders map[string]string,
+) (*http.Response, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
 	sc.applyHeaders(req)
+	sc.applyImplicitHeaders(req, implicitHeaders)
 	return sc.client.Do(req)
 }
 
@@ -213,6 +218,7 @@ func (sc *SessionClient) MarshallBodyToStruct(body io.ReadCloser, v interface{})
 		return err
 	}
 	body.Close()
+	pp.Printf("buf: %s\n", buf.String())
 	return json.Unmarshal(buf.Bytes(), v)
 }
 

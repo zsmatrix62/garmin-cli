@@ -2,6 +2,7 @@ package flows
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"os"
 	"path"
@@ -13,6 +14,11 @@ import (
 	"github.com/zsmatrix62/garmin-cli/garmin/types/state"
 )
 
+// FlowUploadActivity uploads a .fit file to Garmin Connect
+//
+// # Always returns OK with the URL of the uploaded activity despite it being successful or not
+//
+// Example: {"Err":{},"Ok":"https://connect.garmin.cn/modern/activity/436478761"}
 func FlowUploadActivity(opt *BasicOption, filePath string) (gres *types.FlowGenericResp[string]) {
 	var err error
 	gres = new(types.FlowGenericResp[string])
@@ -82,13 +88,34 @@ func FlowUploadActivity(opt *BasicOption, filePath string) (gres *types.FlowGene
 		return
 	}
 
+	activityUrlFmt := fmt.Sprintf("https://connect.%s/modern/activity/%s", garminHost, "%d")
 	if uRes.Fails() {
 		if len(uRes.Failures()) > 0 {
 			gres.Err = errors.New(uRes.Failures()[0].Messages[0].Content)
+			u := fmt.Sprintf(activityUrlFmt, uRes.Failures()[0].InternalID)
+			gres.Ok = &u
 		}
 	} else {
 		_s := uRes.DetailedImportResult.UploadUUID.Uuid
-		gres.Ok = &_s
+		if uRes2, err := actions.ActionCheckActivityStatus(gClient, garminHost, s, _s); err != nil {
+			gres.Err = err
+			return
+		} else {
+			if uRes2.Fails() {
+				if len(uRes2.Failures()) > 0 {
+					gres.Err = errors.New(uRes.Failures()[0].Messages[0].Content)
+					u := fmt.Sprintf(activityUrlFmt, uRes.Failures()[0].InternalID)
+					gres.Ok = &u
+				}
+			} else {
+				if uRes2.Success() {
+					if len(uRes2.Successes()) > 0 {
+						u := fmt.Sprintf(activityUrlFmt, uRes2.Successes()[0].InternalID)
+						gres.Ok = &u
+					}
+				}
+			}
+		}
 	}
 	return
 }

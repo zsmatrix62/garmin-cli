@@ -67,23 +67,24 @@ type ActionUploadResponse struct {
 }
 
 type DetailedImportResult struct {
-	UploadID       string      `json:"uploadId"`
-	UploadUUID     UploadUUID  `json:"uploadUuid"`
-	Owner          int64       `json:"owner"`
-	FileSize       int64       `json:"fileSize"`
-	ProcessingTime int64       `json:"processingTime"`
-	CreationDate   string      `json:"creationDate"`
-	IPAddress      string      `json:"ipAddress"`
-	FileName       string      `json:"fileName"`
-	Report         interface{} `json:"report"`
-	Failures       []Failure   `json:"failures"`
+	UploadID       any              `json:"uploadId"`
+	UploadUUID     UploadUUID       `json:"uploadUuid"`
+	Owner          int64            `json:"owner"`
+	FileSize       int64            `json:"fileSize"`
+	ProcessingTime int64            `json:"processingTime"`
+	CreationDate   string           `json:"creationDate"`
+	IPAddress      string           `json:"ipAddress"`
+	FileName       string           `json:"fileName"`
+	Report         interface{}      `json:"report"`
+	Failures       []ActivityStatus `json:"failures"`
+	Successes      []ActivityStatus `json:"successes"`
 }
 
 type UploadUUID struct {
 	Uuid string `json:"uuid"`
 }
 
-type Failure struct {
+type ActivityStatus struct {
 	InternalID int64     `json:"internalId"`
 	ExternalID string    `json:"externalId"`
 	Messages   []Message `json:"messages"`
@@ -94,7 +95,7 @@ type Message struct {
 	Content string `json:"content"`
 }
 
-func (aur *ActionUploadResponse) Failures() []Failure {
+func (aur *ActionUploadResponse) Failures() []ActivityStatus {
 	return aur.DetailedImportResult.Failures
 }
 
@@ -102,7 +103,23 @@ func (aur *ActionUploadResponse) Fails() bool {
 	return len(aur.Failures()) > 0
 }
 
+func (aur *ActionUploadResponse) Successes() []ActivityStatus {
+	return aur.DetailedImportResult.Successes
+}
+
 func (aur *ActionUploadResponse) Success() bool {
-	return (!strings.EqualFold(aur.DetailedImportResult.UploadID, "")) &&
-		!strings.EqualFold(aur.DetailedImportResult.UploadUUID.Uuid, "")
+	uploadId := aur.DetailedImportResult.UploadID
+	uploadIdOk := false
+	if uploadIdNum := uploadId.(float64); uploadIdNum > 0 {
+		uploadIdOk = true
+	}
+	if uploadIdStr := uploadId.(string); uploadIdStr != "" {
+		uploadIdOk = true
+	}
+
+	return ((uploadIdOk) &&
+		!strings.EqualFold(
+			aur.DetailedImportResult.UploadUUID.Uuid,
+			"",
+		)) || len(aur.DetailedImportResult.Successes) > 0
 }

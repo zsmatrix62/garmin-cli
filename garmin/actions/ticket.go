@@ -60,7 +60,7 @@ func ActionCreateSession(
 ) (err error) {
 	url := fmt.Sprintf("https://connect.%s/modern?ticket=%s", host, ticke.ServiceTicketID)
 
-	resp, eerr := client.Get(url)
+	resp, eerr := client.Get(url, nil)
 	if eerr != nil {
 		return fmt.Errorf("failed to create session: %w", eerr)
 	}

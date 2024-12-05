@@ -14,7 +14,7 @@ func ActionAccessSignInPage(client *session.SessionClient, host string) error {
 		host,
 	)
 	fmt.Println("Accessing Garmin sign-in page...", garminURL)
-	resp, err := client.Get(garminURL)
+	resp, err := client.Get(garminURL, nil)
 	if err != nil {
 		return fmt.Errorf("failed to access Garmin sign-in page: %w", err)
 	}

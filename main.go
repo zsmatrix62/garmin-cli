@@ -44,11 +44,7 @@ func main() {
 					log.Fatalf("Error: upload-fit requires a single argument")
 				}
 				gres := flows.FlowUploadActivity(opts, args[0])
-				if gres.Err != nil {
-					log.Fatalf("Error: %v", gres.Err)
-				} else {
-					log.Printf("Success: %v", gres.Ok)
-				}
+				gres.ToStdOut()
 			default:
 				log.Fatalf("Error: unknown flow %s", flow)
 			}
