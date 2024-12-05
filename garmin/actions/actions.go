@@ -10,7 +10,8 @@ import (
 // AccessSignInPage 访问 Garmin 登录页面并等待特定元素
 func ActionAccessSignInPage(client *session.SessionClient, host string) error {
 	garminURL := fmt.Sprintf(
-		"https://sso.%s/portal/sso/zh-CN/sign-in?clientId=GarminConnect&service=https://connect.garmin.cn/modern",
+		"https://sso.%s/portal/sso/zh-CN/sign-in?clientId=GarminConnect&service=https://connect.%s/modern",
+		host,
 		host,
 	)
 	fmt.Println("Accessing Garmin sign-in page...", garminURL)

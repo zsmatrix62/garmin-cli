@@ -6,8 +6,8 @@ import (
 	"path"
 )
 
-func StateFileName(baseDir string, username string) string {
-	return path.Join(baseDir, fmt.Sprintf("%s.json", username))
+func StateFileName(baseDir string, host string, username string) string {
+	return path.Join(baseDir, host, fmt.Sprintf("%s.json", username))
 }
 
 func JsonString(v interface{}) (string, error) {

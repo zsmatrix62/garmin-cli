@@ -16,7 +16,7 @@ func NewGarminClient(
 	}
 
 	jar, _ := WithGarminStateFile(
-		helpers.StateFileName(state_file_dir, username),
+		helpers.StateFileName(state_file_dir, garminHost, username),
 	)
 	c = session.NewSessionClient(implicitHeaders, jar)
 	return c, jar != nil

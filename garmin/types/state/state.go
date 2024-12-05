@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/url"
 	"os"
+	"path"
 	"time"
 
 	"github.com/zsmatrix62/garmin-cli/garmin/pkg/helpers"
@@ -20,8 +21,8 @@ var garminUrls = []string{
 	".garmin.cn",
 }
 
-func DeleteStateFile(dir string, username string) error {
-	filePath := helpers.StateFileName(dir, username)
+func DeleteStateFile(dir, host string, username string) error {
+	filePath := helpers.StateFileName(dir, host, username)
 	return os.Remove(filePath)
 }
 
@@ -40,14 +41,14 @@ func LoadStateFromFile(stateFile string) (*GarminState, error) {
 	return state, nil
 }
 
-func LoadState(dir string, username string) (*GarminState, error) {
-	filePath := helpers.StateFileName(dir, username)
+func LoadState(dir, host string, username string) (*GarminState, error) {
+	filePath := helpers.StateFileName(dir, host, username)
 	return LoadStateFromFile(filePath)
 }
 
 func SaveState(
 	client *session.SessionClient,
-	baseDir string,
+	baseDir, host string,
 	username string,
 	ticket *types.ActionTicketResponse,
 	token *types.ActionTokenResponse,
@@ -57,7 +58,7 @@ func SaveState(
 		url, _ := url.Parse(u)
 		urls = append(urls, url)
 	}
-	filePath := helpers.StateFileName(baseDir, username)
+	filePath := helpers.StateFileName(baseDir, host, username)
 
 	state := &GarminState{
 		Ticket:     ticket,
@@ -70,6 +71,13 @@ func SaveState(
 	stateBytes, err := json.Marshal(state)
 	if err != nil {
 		return err
+	}
+
+	fileDir := path.Dir(filePath)
+	if _, err2 := os.Stat(fileDir); os.IsNotExist(err2) {
+		if err3 := os.MkdirAll(fileDir, os.ModePerm); err3 != nil {
+			return err3
+		}
 	}
 
 	f, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY, 0644)

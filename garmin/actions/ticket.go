@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/k0kubun/pp/v3"
 	"github.com/zsmatrix62/garmin-cli/garmin/types"
 	"github.com/zsmatrix62/garmin-cli/session"
 )
@@ -39,7 +38,6 @@ func ActionGetTicket(
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		pp.Println(resp)
 		return ticketResp, fmt.Errorf("unexpected status code during login: %d", resp.StatusCode)
 	}
 

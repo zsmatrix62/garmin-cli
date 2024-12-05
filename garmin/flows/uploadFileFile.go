@@ -59,7 +59,7 @@ func FlowUploadActivity(opt *BasicOption, filePath string) (gres *types.FlowGene
 		}
 	}
 
-	s, _ := state.LoadState(state_file_dir, username)
+	s, _ := state.LoadState(state_file_dir, garminHost, username)
 	if s.TokenExpired() && s.CanRefreshToken() {
 		log.Println("Token expired, refreshing...")
 		// if token, err := actions.ActionRefreshToken(gClient, garminHost, s); err != nil {
@@ -71,11 +71,11 @@ func FlowUploadActivity(opt *BasicOption, filePath string) (gres *types.FlowGene
 
 			if ticket != nil && opt.PersistState {
 				// Step 5: save sate
-				if err = state.SaveState(gClient, state_file_dir, username, ticket, token); err != nil {
+				if err = state.SaveState(gClient, state_file_dir, garminHost, username, ticket, token); err != nil {
 					return
 				}
 			} else {
-				if err = state.DeleteStateFile(state_file_dir, username); err != nil {
+				if err = state.DeleteStateFile(state_file_dir, garminHost, username); err != nil {
 					return
 				}
 			}
@@ -84,7 +84,7 @@ func FlowUploadActivity(opt *BasicOption, filePath string) (gres *types.FlowGene
 
 	uRes, err := actions.ActionUploadFitActivity(gClient, garminHost, s, filePath)
 	if err != nil {
-		_ = state.DeleteStateFile(state_file_dir, username)
+		_ = state.DeleteStateFile(state_file_dir, garminHost, username)
 		return
 	}
 

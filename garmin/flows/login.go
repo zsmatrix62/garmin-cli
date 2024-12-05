@@ -61,7 +61,7 @@ func Login(
 			_ = os.MkdirAll(state_file_dir, os.ModePerm)
 		}
 
-		if err = state.SaveState(c, state_file_dir, username, ticket, token); err != nil {
+		if err = state.SaveState(c, state_file_dir, garminHost, username, ticket, token); err != nil {
 			return
 		}
 	}
